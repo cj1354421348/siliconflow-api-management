@@ -630,11 +630,23 @@
     function displayCurrentPage() {
       const startIndex = (currentPage - 1) * keysPerPage;
       const endIndex = Math.min(startIndex + keysPerPage, allKeys.length);
-      const keysToDisplay = allKeys.slice(startIndex, endIndex);
       
       const keysContainer = document.getElementById('keysContainer');
       keysContainer.innerHTML = '';
       
+      // 首先按余额从高到低排序
+      let keysToDisplay = [...allKeys];
+      keysToDisplay.sort((a, b) => {
+        // 如果密钥无效或余额为零，排在最后面
+        const balanceA = (!a.isValid || parseFloat(a.balance || 0) <= 0) ? -1 : parseFloat(a.balance || 0);
+        const balanceB = (!b.isValid || parseFloat(b.balance || 0) <= 0) ? -1 : parseFloat(b.balance || 0);
+        return balanceB - balanceA; // 降序排列
+      });
+      
+      // 使用排序后的数组获取当前页的密钥
+      keysToDisplay = keysToDisplay.slice(startIndex, endIndex);
+      
+      // 显示每个密钥
       keysToDisplay.forEach(key => {
         const keyElement = document.createElement('div');
         keyElement.className = 'key-card';
@@ -668,14 +680,13 @@
         const truncatedKey = truncateKey(key.key);
         
         // 格式化更新时间
-        const updateTime = new Date(key.last_updated).toLocaleString('zh-CN', {
+        const updateTime = key.last_updated ? new Date(key.last_updated).toLocaleString('zh-CN', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
           hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        });
+          minute: '2-digit'
+        }) : '未知';
         
         // 显示余额或失效状态
         const balanceDisplay = isValid ? key.balance : '失效';
@@ -685,24 +696,32 @@
             <div class="key-text">${truncatedKey}</div>
             <button class="copy-button">复制</button>
           </div>
-          <div class="key-card-top" style="justify-content: flex-end;">
-            <div class="key-balance ${balanceClass}">${balanceDisplay}</div>
+          <div class="key-card-middle">
+            <div class="balance ${balanceClass}">
+              ${balanceDisplay}
+            </div>
           </div>
           <div class="key-card-bottom">
             更新于 ${updateTime}
           </div>
         `;
         
-        // 添加点击复制功能
-        const copyButton = keyElement.querySelector('.copy-button');
-        copyButton.addEventListener('click', (e) => {
-          e.stopPropagation(); // 防止冒泡到卡片
-          copyToClipboard(key.key);
+        // 添加hover效果提示
+        keyElement.setAttribute('title', '点击查看完整密钥');
+        
+        // 为每个密钥卡片添加点击事件
+        keyElement.addEventListener('click', function(e) {
+          if (!e.target.closest('.copy-button')) {
+            showToast(`密钥: ${key.key}`, 3000);
+          }
         });
         
-        // 整个卡片也可以点击复制
-        keyElement.addEventListener('click', () => {
+        // 为复制按钮添加点击事件
+        const copyButton = keyElement.querySelector('.copy-button');
+        copyButton.addEventListener('click', function(e) {
+          e.stopPropagation();
           copyToClipboard(key.key);
+          showToast('密钥已复制到剪贴板', 2000);
         });
         
         keysContainer.appendChild(keyElement);
