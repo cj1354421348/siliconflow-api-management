@@ -827,27 +827,65 @@ app.all('/v1/*', async (req, res) => {
           res.setHeader('Cache-Control', 'no-cache');
           res.setHeader('Connection', 'keep-alive');
           
-          // 直接转发流式响应
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          
-          async function streamResponse() {
-            try {
-              while (true) {
-                const { done, value } = await reader.read();
-                
-                if (done) {
-                  console.log('流传输完成');
-                  res.end();
-                  break;
+          // 使用管道流式转发响应
+          // 针对node-fetch v2的兼容处理
+          if (response.body && typeof response.body.pipe === 'function') {
+            // 如果body是可管道流的(node-fetch v2)
+            console.log('使用管道流式传输');
+            response.body.pipe(res);
+            return;
+          } else if (response.body && typeof response.body.getReader === 'function') {
+            // 如果body有getReader方法(fetch)
+            console.log('使用getReader流式传输');
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            
+            async function streamResponse() {
+              try {
+                while (true) {
+                  const { done, value } = await reader.read();
+                  
+                  if (done) {
+                    console.log('流传输完成');
+                    res.end();
+                    break;
+                  }
+                  
+                  // 解码接收到的数据并转发
+                  const chunk = decoder.decode(value, { stream: true });
+                  res.write(chunk);
                 }
-                
-                // 解码接收到的数据并转发
-                const chunk = decoder.decode(value, { stream: true });
-                res.write(chunk);
+              } catch (error) {
+                console.error('流处理错误:', error);
+                if (!res.headersSent) {
+                  res.status(500).json({
+                    code: 50000,
+                    message: "流处理错误: " + error.message,
+                    status: false
+                  });
+                } else {
+                  res.end();
+                }
               }
-            } catch (error) {
-              console.error('流处理错误:', error);
+            }
+            
+            streamResponse();
+            return;
+          } else {
+            // 作为文本处理并分块发送
+            console.log('使用文本分块传输');
+            response.text().then(text => {
+              // 按行分割
+              const lines = text.split('\n');
+              // 逐行发送
+              for (const line of lines) {
+                if (line.trim() !== '') {
+                  res.write(line + '\n');
+                }
+              }
+              res.end();
+            }).catch(error => {
+              console.error('处理文本响应出错:', error);
               if (!res.headersSent) {
                 res.status(500).json({
                   code: 50000,
@@ -857,11 +895,9 @@ app.all('/v1/*', async (req, res) => {
               } else {
                 res.end();
               }
-            }
+            });
+            return;
           }
-          
-          streamResponse();
-          return;
         }
         
         // 否则返回JSON响应
