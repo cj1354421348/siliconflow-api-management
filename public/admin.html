@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>硅基流动API Key Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      background-color: #7e3ff2;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 10px rgba(126, 63, 242, 0.2);
+    }
+    .logo img {
+      width: 50px;
+      height: 50px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      border: 1px solid #f0f0f0;
+    }
+    .card h2 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: #7e3ff2;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background-color: #7e3ff2;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #6a2ce0;
+    }
+    .btn-danger {
+      background-color: #ff3b3b;
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #e62e2e;
+    }
+    .btn-warning {
+      background-color: #ff9800;
+      color: white;
+    }
+    .btn-warning:hover {
+      background-color: #e68a00;
+    }
+    .key-list {
+      display: grid;
+      gap: 20px;
+    }
+    .key-item {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border: 1px solid #f0f0f0;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .key-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .key-info {
+      flex: 1;
+      margin-right: 20px;
+    }
+    .key-value {
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 12px;
+      font-weight: 500;
+      background: #f8f9fa;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+    .key-balance {
+      font-size: 16px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 12px;
+      background: #f0f7ff;
+      color: #1a73e8;
+    }
+    .key-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .status-valid {
+      background-color: #e8f8f0;
+      color: #28a745;
+    }
+    .status-invalid {
+      background-color: #fff0f0;
+      color: #dc3545;
+    }
+    .key-time {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+    }
+    .key-time::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: #ddd;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .key-controls {
+      display: flex;
+      gap: 8px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8f9fa;
+      color: #666;
+    }
+    .btn-icon:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+    .btn-refresh {
+      color: #1a73e8;
+    }
+    .btn-refresh:hover {
+      background: #e8f0fe;
+      color: #1557b0;
+    }
+    .btn-delete {
+      color: #dc3545;
+    }
+    .btn-delete:hover {
+      background: #fff0f0;
+      color: #dc3545;
+    }
+    .refresh-controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+    .auto-refresh {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bulk-add-area {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: monospace;
+      margin-bottom: 10px;
+      resize: vertical;
+    }
+    .textarea-hint {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(30px);
+      background-color: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      z-index: 1000;
+      transition: transform 0.3s, opacity 0.3s;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast.toast-error {
+      background-color: #ff3b3b;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 30px 0;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .total-keys {
+      color: #28a745;
+    }
+    .valid-keys {
+      color: #28a745;
+    }
+    .total-balance {
+      color: #7e3ff2;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+      </svg>
+    </div>
+    <h1>硅基流动API Key Management</h1>
+    <div class="subtitle">API密钥管理系统</div>
+    <button onclick="logoutAdmin()" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px;">登出</button>
+  </div>
+
+  <div class="card">
+    <h2>系统配置</h2>
+    <div class="form-group">
+      <label for="adminUsername">管理员用户名</label>
+      <input type="text" id="adminUsername" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="adminPassword">管理员密码</label>
+      <input type="password" id="adminPassword" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="authApiKey">验证API密钥 (用于验证用户访问本服务)</label>
+      <input type="text" id="authApiKey" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="pageSize">每页显示数量</label>
+      <input type="number" id="pageSize" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="accessControl">访问控制</label>
+      <select id="accessControl" class="form-control">
+        <option value="open">完全开放</option>
+        <option value="restricted">部分开放</option>
+        <option value="private">完全私有</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="guestPassword">访客密码</label>
+      <input type="password" id="guestPassword" class="form-control">
+    </div>
+    <button onclick="saveConfig()" class="btn btn-primary">保存配置</button>
+  </div>
+
+  <div class="card">
+    <h2>密钥管理</h2>
+    <div class="form-group">
+      <label for="newKey">新密钥</label>
+      <div style="display: flex; gap: 10px;">
+        <input type="text" id="newKey" class="form-control">
+        <button onclick="addKey()" class="btn btn-primary">添加密钥</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="bulkKeys">批量添加密钥</label>
+      <textarea id="bulkKeys" class="bulk-add-area" placeholder="每行一个密钥，或用逗号分隔"></textarea>
+      <div class="textarea-hint">支持每行一个密钥，或用逗号分隔多个密钥</div>
+      <button onclick="addBulkKeys()" class="btn btn-primary">批量添加</button>
+    </div>
+    
+    <div class="refresh-controls">
+      <button onclick="refreshAllBalances()" class="btn btn-primary">刷新所有余额</button>
+      <button onclick="deleteInvalidKeys()" class="btn btn-warning">删除所有失效密钥</button>
+      <div class="auto-refresh">
+        <label for="autoRefresh">自动刷新:</label>
+        <select id="autoRefreshInterval" class="form-control" onchange="setAutoRefresh()">
+          <option value="0">关闭</option>
+          <option value="60000">每分钟</option>
+          <option value="300000">每5分钟</option>
+          <option value="900000">每15分钟</option>
+          <option value="1800000">每30分钟</option>
+          <option value="3600000">每小时</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="stats" class="stats" style="display: none;">
+      <div class="stat-item">
+        <div class="stat-value total-keys" id="totalKeys">0</div>
+        <div class="stat-label">总API Keys</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value valid-keys" id="validKeys">0</div>
+        <div class="stat-label">有效API Keys</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value total-balance" id="totalBalance">¥0.00</div>
+        <div class="stat-label">总额度</div>
+      </div>
+    </div>
+
+    <div id="keyList" class="key-list"></div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let adminCredentials = null;
+    let autoRefreshIntervalId = null;
+    const CRED_STORAGE_KEY = 'siliconflow_admin_cred';
+    const ENC_SECRET = 'sf_admin_secure_key'; // 简单加密密钥
+
+    // 简单的加密函数
+    function encrypt(text, secret) {
+      // 一个简单的异或加密
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ secret.charCodeAt(i % secret.length));
+      }
+      return btoa(result); // Base64编码
+    }
+
+    // 简单的解密函数
+    function decrypt(encoded, secret) {
+      try {
+        const text = atob(encoded); // Base64解码
+        let result = '';
+        for (let i = 0; i < text.length; i++) {
+          result += String.fromCharCode(text.charCodeAt(i) ^ secret.charCodeAt(i % secret.length));
+        }
+        return result;
+      } catch (e) {
+        console.error('解密失败', e);
+        return null;
+      }
+    }
+
+    // 保存凭据到本地存储
+    function saveCredentialsToStorage(credentials) {
+      if (!credentials) return;
+      
+      try {
+        const encrypted = encrypt(credentials, ENC_SECRET);
+        localStorage.setItem(CRED_STORAGE_KEY, encrypted);
+      } catch (e) {
+        console.error('保存凭据失败:', e);
+      }
+    }
+
+    // 从本地存储加载凭据
+    function loadCredentialsFromStorage() {
+      try {
+        const encrypted = localStorage.getItem(CRED_STORAGE_KEY);
+        if (encrypted) {
+          return decrypt(encrypted, ENC_SECRET);
+        }
+      } catch (e) {
+        console.error('加载凭据失败:', e);
+      }
+      return null;
+    }
+
+    // 清除存储的凭据
+    function clearStoredCredentials() {
+      try {
+        localStorage.removeItem(CRED_STORAGE_KEY);
+      } catch (e) {
+        console.error('清除凭据失败:', e);
+      }
+    }
+
+    // 获取管理员凭据
+    function getAdminCredentials() {
+      if (!adminCredentials) {
+        // 先尝试从存储中获取
+        adminCredentials = loadCredentialsFromStorage();
+        
+        // 如果没有存储的凭据，则请求用户输入
+        if (!adminCredentials) {
+          const username = prompt('请输入管理员用户名:');
+          const password = prompt('请输入管理员密码:');
+          if (username && password) {
+            adminCredentials = btoa(username + ':' + password);
+            // 暂时不保存，等验证成功后再保存
+          }
+        }
+      }
+      return adminCredentials;
+    }
+
+    // 验证管理员凭据
+    async function verifyAdminCredentials() {
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return false;
+      }
+
+      try {
+        const response = await fetch('/api/config', {
+          headers: {
+            'Authorization': 'Basic ' + credentials
+          }
+        });
+        
+        const data = await response.json();
+        if (!data.success) {
+          alert(data.message);
+          adminCredentials = null;
+          clearStoredCredentials(); // 清除无效的凭据
+          return false;
+        }
+        
+        // 凭据验证成功，保存到本地存储
+        saveCredentialsToStorage(credentials);
+        return true;
+      } catch (error) {
+        console.error('验证管理员凭据失败:', error);
+        alert('验证管理员凭据失败');
+        adminCredentials = null;
+        clearStoredCredentials(); // 清除无效的凭据
+        return false;
+      }
+    }
+
+    // 加载配置
+    async function loadConfig() {
+      try {
+        const credentials = getAdminCredentials();
+        if (!credentials) {
+          alert('请输入管理员凭据');
+          return;
+        }
+
+        const response = await fetch('/api/config', {
+          headers: {
+            'Authorization': 'Basic ' + credentials
+          }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          document.getElementById('adminUsername').value = data.data.adminUsername;
+          document.getElementById('adminPassword').value = data.data.adminPassword;
+          document.getElementById('authApiKey').value = data.data.authApiKey;
+          document.getElementById('pageSize').value = data.data.pageSize;
+          document.getElementById('accessControl').value = data.data.accessControl;
+          document.getElementById('guestPassword').value = data.data.guestPassword;
+        } else {
+          alert(data.message);
+          adminCredentials = null;
+        }
+      } catch (error) {
+        console.error('加载配置失败:', error);
+        alert('加载配置失败');
+        adminCredentials = null;
+      }
+    }
+
+    // 修改保存配置函数
+    async function saveConfig() {
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      const originalUsername = document.getElementById('adminUsername').value;
+      const originalPassword = document.getElementById('adminPassword').value;
+      
+      const config = {
+        admin_username: originalUsername,
+        admin_password: originalPassword,
+        auth_api_key: document.getElementById('authApiKey').value,
+        page_size: document.getElementById('pageSize').value,
+        access_control: document.getElementById('accessControl').value,
+        guest_password: document.getElementById('guestPassword').value
+      };
+
+      try {
+        const response = await fetch('/api/config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + credentials
+          },
+          body: JSON.stringify(config)
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          showToast('配置保存成功', 2000);
+          
+          // 检查管理员凭据是否已变更
+          const [username, password] = atob(credentials).split(':');
+          if (username !== originalUsername || password !== originalPassword) {
+            // 凭据已变更，更新存储的凭据
+            const newCredentials = btoa(originalUsername + ':' + originalPassword);
+            adminCredentials = newCredentials;
+            saveCredentialsToStorage(newCredentials);
+            showToast('管理员凭据已更新', 3000);
+          }
+          
+          loadKeys();
+        } else {
+          showToast(data.message || '保存失败', 3000, true);
+          if (data.message && data.message.includes('未授权')) {
+            adminCredentials = null;
+            clearStoredCredentials(); // 清除无效的凭据
+          }
+        }
+      } catch (error) {
+        console.error('保存配置失败:', error);
+        showToast('保存配置失败: ' + (error.message || '未知错误'), 3000, true);
+        adminCredentials = null;
+        clearStoredCredentials(); // 清除无效的凭据
+      }
+    }
+
+    // 添加密钥
+    async function addKey() {
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      const key = document.getElementById('newKey').value;
+      if (!key) {
+        alert('请输入密钥');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/add-key', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + credentials
+          },
+          body: JSON.stringify({ key })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          alert(data.message || '密钥添加成功');
+          document.getElementById('newKey').value = '';
+          loadKeys();
+        } else {
+          alert(data.message || '添加密钥失败');
+          if (data.message && data.message.includes('已存在')) {
+            document.getElementById('newKey').value = '';
+          }
+        }
+      } catch (error) {
+        console.error('添加密钥失败:', error);
+        alert('添加密钥失败: ' + (error.message || '未知错误'));
+      }
+    }
+
+    // 批量添加密钥
+    async function addBulkKeys() {
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      const bulkKeysText = document.getElementById('bulkKeys').value.trim();
+      if (!bulkKeysText) {
+        alert('请输入要添加的密钥');
+        return;
+      }
+
+      // 处理密钥，支持换行和逗号分隔
+      const keys = bulkKeysText.split(/[\n,]+/).map(key => key.trim()).filter(key => key.length > 0);
+      
+      if (keys.length === 0) {
+        alert('未找到有效的密钥');
+        return;
+      }
+
+      let successCount = 0;
+      let failCount = 0;
+      let existsCount = 0;
+
+      for (const key of keys) {
+        try {
+          const response = await fetch('/api/add-key', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Basic ' + credentials
+            },
+            body: JSON.stringify({ key })
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            successCount++;
+          } else if (data.message && data.message.includes('已存在')) {
+            existsCount++;
+          } else {
+            failCount++;
+          }
+        } catch (error) {
+          console.error(`添加密钥 ${key} 失败:`, error);
+          failCount++;
+        }
+      }
+
+      alert(`批量添加结果：成功 ${successCount} 个，失败 ${failCount} 个，已存在 ${existsCount} 个`);
+      document.getElementById('bulkKeys').value = '';
+      loadKeys();
+    }
+
+    // 加载密钥列表
+    async function loadKeys() {
+      try {
+        const credentials = getAdminCredentials();
+        if (!credentials) {
+          alert('请输入管理员凭据');
+          return;
+        }
+
+        const response = await fetch('/api/keys', {
+          headers: {
+            'Authorization': 'Basic ' + credentials
+          }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          const keysList = document.getElementById('keyList');
+          keysList.innerHTML = '';
+          
+          data.data.forEach(key => {
+            const keyElement = document.createElement('div');
+            keyElement.className = 'key-item';
+            keyElement.innerHTML = `
+              <div class="key-info">
+                <div class="key-value">${key.key}</div>
+                <div class="key-balance">¥${key.balance}</div>
+                <div class="key-status ${key.isValid ? 'status-valid' : 'status-invalid'}">
+                  ${key.isValid ? '有效' : '失效'}
+                </div>
+                <div class="key-time">创建于 ${new Date(key.created_at).toLocaleString()}</div>
+                <div class="key-time">更新于 ${new Date(key.last_updated).toLocaleString()}</div>
+              </div>
+              <div class="key-controls">
+                <button onclick="refreshKeyBalance('${key.key}')" class="btn-icon btn-refresh" title="刷新余额">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path>
+                  </svg>
+                </button>
+                <button onclick="deleteKey('${key.key}')" class="btn-icon btn-delete" title="删除密钥">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            `;
+            keysList.appendChild(keyElement);
+          });
+        } else {
+          alert(data.message);
+          adminCredentials = null;
+        }
+      } catch (error) {
+        console.error('加载密钥列表失败:', error);
+        alert('加载密钥列表失败');
+        adminCredentials = null;
+      }
+    }
+
+    // 刷新单个密钥余额 (静默刷新，不弹窗)
+    async function refreshKeyBalance(key) {
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/refresh-key-balance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + credentials
+          },
+          body: JSON.stringify({ key })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // 不弹窗，静默刷新
+          loadKeys();
+        }
+      } catch (error) {
+        console.error('刷新余额失败:', error);
+      }
+    }
+
+    // 刷新所有密钥余额 (静默刷新，不弹窗)
+    async function refreshAllBalances() {
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/refresh-all-balances', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Basic ' + credentials
+          }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // 不弹窗，静默刷新
+          loadKeys();
+        }
+      } catch (error) {
+        console.error('刷新所有余额失败:', error);
+      }
+    }
+
+    // 设置自动刷新
+    function setAutoRefresh() {
+      const interval = parseInt(document.getElementById('autoRefreshInterval').value);
+      
+      // 清除现有的定时器
+      if (autoRefreshIntervalId) {
+        clearInterval(autoRefreshIntervalId);
+        autoRefreshIntervalId = null;
+      }
+      
+      // 如果选择了有效的时间间隔，设置新的定时器
+      if (interval > 0) {
+        autoRefreshIntervalId = setInterval(refreshAllBalances, interval);
+        console.log(`已设置自动刷新，间隔: ${interval}毫秒`);
+      }
+    }
+
+    // 删除密钥
+    async function deleteKey(key) {
+      if (!confirm(`确定要删除密钥 ${key} 吗？`)) {
+        return;
+      }
+      
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/delete-key`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + credentials
+          },
+          body: JSON.stringify({ key })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          alert(data.message || '密钥删除成功');
+          loadKeys();
+        } else {
+          alert(data.message || '删除密钥失败');
+        }
+      } catch (error) {
+        console.error('删除密钥失败:', error);
+        alert('删除密钥失败: ' + (error.message || '未知错误'));
+      }
+    }
+
+    // 删除所有失效的密钥
+    async function deleteInvalidKeys() {
+      if (!confirm('确定要删除所有失效的密钥吗？此操作不可撤销!')) {
+        return;
+      }
+      
+      const credentials = getAdminCredentials();
+      if (!credentials) {
+        alert('请输入管理员凭据');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/keys', {
+          headers: {
+            'Authorization': 'Basic ' + credentials
+          }
+        });
+        
+        const keysData = await response.json();
+        if (!keysData.success) {
+          alert('获取密钥列表失败');
+          return;
+        }
+
+        // 找出所有失效的密钥
+        const invalidKeys = keysData.data.filter(key => !key.isValid || parseFloat(key.balance) <= 0)
+          .map(key => key.key);
+        
+        if (invalidKeys.length === 0) {
+          alert('没有找到失效的密钥');
+          return;
+        }
+
+        // 显示确认对话框，显示将要删除的密钥数量
+        if (!confirm(`将要删除 ${invalidKeys.length} 个失效密钥，确定继续吗？`)) {
+          return;
+        }
+
+        // 创建toast通知
+        showToast(`正在删除 ${invalidKeys.length} 个失效密钥...`);
+
+        // 逐个删除失效密钥
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const key of invalidKeys) {
+          try {
+            const deleteResponse = await fetch(`/api/delete-key`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + credentials
+              },
+              body: JSON.stringify({ key })
+            });
+            
+            const deleteData = await deleteResponse.json();
+            if (deleteData.success) {
+              successCount++;
+            } else {
+              failCount++;
+            }
+          } catch (error) {
+            console.error(`删除密钥 ${key} 失败:`, error);
+            failCount++;
+          }
+        }
+
+        // 显示删除结果
+        showToast(`删除完成: 成功 ${successCount} 个，失败 ${failCount} 个`, 3000);
+        
+        // 重新加载密钥列表
+        loadKeys();
+      } catch (error) {
+        console.error('删除失效密钥失败:', error);
+        showToast('删除失效密钥失败: ' + (error.message || '未知错误'), 3000, true);
+      }
+    }
+
+    // 显示toast通知
+    function showToast(message, duration = 2000, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show';
+      
+      if (isError) {
+        toast.classList.add('toast-error');
+      } else {
+        toast.classList.remove('toast-error');
+      }
+      
+      // 清除之前的定时器
+      if (toast.timeoutId) {
+        clearTimeout(toast.timeoutId);
+      }
+      
+      // 设置自动关闭
+      if (duration > 0) {
+        toast.timeoutId = setTimeout(() => {
+          toast.classList.remove('show');
+        }, duration);
+      }
+    }
+
+    // 页面加载时验证凭据并加载数据
+    window.onload = async () => {
+      if (await verifyAdminCredentials()) {
+        loadConfig();
+        loadKeys();
+      } else {
+        window.location.href = '/';
+      }
+    };
+
+    // 页面卸载时清除定时器
+    window.onunload = () => {
+      if (autoRefreshIntervalId) {
+        clearInterval(autoRefreshIntervalId);
+      }
+    };
+
+    // 添加登出功能
+    function logoutAdmin() {
+      if (confirm('确定要退出登录吗？')) {
+        adminCredentials = null;
+        clearStoredCredentials();
+        window.location.href = '/';
+      }
+    }
+  </script>
+</body>
+</html> 
