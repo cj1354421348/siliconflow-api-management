@@ -44,6 +44,67 @@
 默认管理员账号: admin  
 默认管理员密码: admin
 
+## API代理使用说明
+
+本系统提供API代理功能，可以自动转发请求到硅基流动API并智能管理密钥。
+
+### 代理工作原理
+
+1. 系统维护一个API密钥池，用于转发请求
+2. 用户使用验证密钥(`AUTH_API_KEY`)访问系统API
+3. 系统验证用户提供的密钥后，从数据库中选择一个有效且有余额的密钥转发请求
+4. 如果所有密钥都无效或无余额，系统会返回错误码(50301)
+
+### 使用方法
+
+1. 在管理界面添加硅基流动API密钥到系统
+2. 设置访问控制模式和验证密钥(`AUTH_API_KEY`)
+3. 使用以下格式发送API请求:
+
+   ```
+   curl -X POST "http://localhost:3000/v1/chat/completions" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer your-auth-api-key" \
+     -d '{
+       "model": "gpt-3.5-turbo",
+       "messages": [
+         {
+           "role": "user",
+           "content": "你好，请用中文回答，你是谁？"
+         }
+       ]
+     }'
+   ```
+
+   将`your-auth-api-key`替换为您设置的`AUTH_API_KEY`值
+
+### 支持的端点
+
+系统支持所有硅基流动API端点，只需将请求发送到相同的路径，但主机名改为您的系统地址：
+
+- 聊天补全: `/v1/chat/completions`
+- 其他所有硅基流动API端点
+
+### 流式响应
+
+系统完全支持流式响应，使用方式与标准API相同：
+
+```
+curl -X POST "http://localhost:3000/v1/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-auth-api-key" \
+  -d '{
+    "model": "gpt-3.5-turbo",
+    "messages": [
+      {
+        "role": "user",
+        "content": "你好，请用中文回答，你是谁？"
+      }
+    ],
+    "stream": true
+  }'
+```
+
 ## 打包部署
 
 1. 打包系统（不需要可执行文件）：
