@@ -1,0 +1,41 @@
+{
+  "title": "Siliconflow API Key Sharing",
+  "subtitle": "API Key Sharing and Management",
+  "adminEntrance": "Admin Panel",
+  "guestAuth": "Guest Authentication",
+  "guestPasswordLabel": "Guest Password:",
+  "verifyButton": "Verify",
+  "logoutButton": "Logout",
+  "copyControls": {
+    "newline": "Copy All (Newline Separated)",
+    "comma": "Copy All (Comma Separated)"
+  },
+  "stats": {
+    "totalKeys": "Total API Keys",
+    "validKeys": "Valid API Keys",
+    "totalBalance": "Total Balance"
+  },
+  "keyCard": {
+    "copyButton": "Copy",
+    "invalid": "Invalid",
+    "updatedAt": "Updated at"
+  },
+  "pagination": {
+    "prev": "« Previous",
+    "next": "Next »"
+  },
+  "footer": "Copyright © 2023 Siliconflow",
+  "toasts": {
+    "copied": "Key copied to clipboard",
+    "copyFailed": "Copy failed",
+    "batchCopyNewline": "All keys copied (newline separated)",
+    "batchCopyComma": "All keys copied (comma separated)",
+    "batchCopyFailed": "Batch copy failed",
+    "logoutSuccess": "Logged out successfully",
+    "loadFailed": "Failed to load key list",
+    "accessCheckFailed": "Failed to check access control",
+    "verifyFailed": "Guest verification failed",
+    "verifySuccess": "Verification successful",
+    "invalidCredentials": "Invalid credentials"
+  }
+}

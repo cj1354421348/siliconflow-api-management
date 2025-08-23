@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>硅基流动API Key Sharing</title>
+  <title data-i18n="title">硅基流动API Key Sharing</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -318,6 +318,8 @@
       background-color: #e62e2e;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.14/i18next.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
 </head>
 <body>
   <div class="header">
@@ -326,57 +328,116 @@
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
       </svg>
     </div>
-    <h1>硅基流动API Key Sharing</h1>
-    <div class="subtitle">API密钥分享与管理</div>
-    <button id="logoutBtn" onclick="logoutGuest()" class="btn-logout" style="display: none;">退出登录</button>
+    <h1 data-i18n="title">硅基流动API Key Sharing</h1>
+    <div class="subtitle" data-i18n="subtitle">API密钥分享与管理</div>
+    <button id="logoutBtn" onclick="logoutGuest()" class="btn-logout" style="display: none;" data-i18n="logoutButton">退出登录</button>
+  </div>
+
+  <div class="language-switcher" style="position: fixed; top: 20px; right: 120px;">
+    <select id="languageSwitcher">
+      <option value="zh-CN">中文</option>
+      <option value="en">English</option>
+    </select>
   </div>
 
   <div id="authForm" class="auth-form" style="display: none;">
-    <h2 class="form-title">访客认证</h2>
+    <h2 class="form-title" data-i18n="guestAuth">访客认证</h2>
     <div class="form-group">
-      <label for="guestPassword">访客密码:</label>
+      <label for="guestPassword" data-i18n="guestPasswordLabel">访客密码:</label>
       <input type="password" id="guestPassword" name="guestPassword">
     </div>
-    <button class="btn-primary" onclick="verifyGuest()">验证</button>
+    <button class="btn-primary" onclick="verifyGuest()" data-i18n="verifyButton">验证</button>
   </div>
 
   <div class="copy-controls" id="copyControls" style="display: none;">
-    <button class="copy-btn" onclick="copyAllKeysWithNewline()">批量复制(换行分隔)</button>
-    <button class="copy-btn" onclick="copyAllKeysWithComma()">批量复制(逗号分隔)</button>
+    <button class="copy-btn" onclick="copyAllKeysWithNewline()" data-i18n="copyControls.newline">批量复制(换行分隔)</button>
+    <button class="copy-btn" onclick="copyAllKeysWithComma()" data-i18n="copyControls.comma">批量复制(逗号分隔)</button>
   </div>
 
   <div id="keysContainer" class="keys-container"></div>
 
   <div id="pagination" class="pagination" style="display: none;">
-    <button class="page-btn" id="prevBtn">« 上一页</button>
+    <button class="page-btn" id="prevBtn" data-i18n="pagination.prev">« 上一页</button>
     <div class="page-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</div>
-    <button class="page-btn" id="nextBtn">下一页 »</button>
+    <button class="page-btn" id="nextBtn" data-i18n="pagination.next">下一页 »</button>
   </div>
 
   <div id="stats" class="stats" style="display: none;">
     <div class="stat-item">
       <div class="stat-value total-keys" id="totalKeys">0</div>
-      <div class="stat-label">总API Keys</div>
+      <div class="stat-label" data-i18n="stats.totalKeys">总API Keys</div>
     </div>
     <div class="stat-item">
       <div class="stat-value valid-keys" id="validKeys">0</div>
-      <div class="stat-label">有效API Keys</div>
+      <div class="stat-label" data-i18n="stats.validKeys">有效API Keys</div>
     </div>
     <div class="stat-item">
       <div class="stat-value total-balance" id="totalBalance">¥0.00</div>
-      <div class="stat-label">总额度</div>
+      <div class="stat-label" data-i18n="stats.totalBalance">总额度</div>
     </div>
   </div>
 
-  <a href="/admin" class="admin-btn">管理员入口</a>
+  <a href="/admin" class="admin-btn" data-i18n="adminEntrance">管理员入口</a>
 
   <div class="footer">
-    版权所有 © 2023 硅基流动
+    <span data-i18n="footer">版权所有 © 2023 硅基流动</span>
   </div>
 
   <div id="toast" class="toast"></div>
   
   <script>
+    // 初始化i18next
+    function initI18next() {
+      // 获取语言选择器
+      const languageSwitcher = document.getElementById('languageSwitcher');
+      
+      // 从localStorage获取保存的语言设置
+      const savedLanguage = localStorage.getItem('language') || 'zh-CN';
+      languageSwitcher.value = savedLanguage;
+      
+      // 初始化i18next
+      i18next
+        .use(i18nextHttpBackend)
+        .init({
+          lng: savedLanguage,
+          fallbackLng: 'zh-CN',
+          ns: ['common'],
+          defaultNS: 'common',
+          backend: {
+            loadPath: '/api/translations/{{lng}}/{{ns}}'
+          }
+        }, function(err, t) {
+          // 初始化完成后翻译页面
+          translatePage();
+        });
+
+      // 绑定语言切换事件
+      languageSwitcher.addEventListener('change', function() {
+        const selectedLanguage = this.value;
+        i18next.changeLanguage(selectedLanguage, () => {
+          localStorage.setItem('language', selectedLanguage);
+          translatePage(); // 重新翻译页面
+        });
+      });
+    }
+
+    // 翻译页面元素
+    function translatePage() {
+      // 翻译带有data-i18n属性的元素
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translation = i18next.t(key);
+        if (translation !== key) { // 只有当翻译存在时才更新
+          // 特殊处理title元素
+          if (element.tagName === 'TITLE') {
+            document.title = translation;
+          } else {
+            element.textContent = translation;
+          }
+        }
+      });
+    }
+
     let allKeys = [];
     let currentPage = 1;
     let keysPerPage = 12;
@@ -450,20 +511,14 @@
       if (!toast) {
         toast = document.createElement('div');
         toast.id = 'toast';
-        toast.style.position = 'fixed';
-        toast.style.bottom = '20px';
-        toast.style.left = '50%';
-        toast.style.transform = 'translateX(-50%)';
-        toast.style.background = '#333';
-        toast.style.color = 'white';
-        toast.style.padding = '10px 20px';
-        toast.style.borderRadius = '5px';
-        toast.style.zIndex = '1000';
+        toast.className = 'toast'; // 添加类名以应用CSS样式
         document.body.appendChild(toast);
       }
       
-      toast.textContent = message;
-      toast.style.display = 'block';
+      // 使用i18next翻译消息（如果存在对应的键）
+      const translatedMessage = i18next.t(message) !== message ? i18next.t(message) : message;
+      toast.textContent = translatedMessage;
+      toast.className = 'toast show'; // 添加show类以显示toast
       
       // 清除之前的定时器
       if (toast.timeoutId) {
@@ -472,7 +527,7 @@
       
       // 设置自动消失
       toast.timeoutId = setTimeout(() => {
-        toast.style.display = 'none';
+        toast.className = 'toast'; // 移除show类以隐藏toast
       }, duration);
     }
 
@@ -496,7 +551,7 @@
       // 检查访问控制重新开始
       checkAccessControl();
       
-      showToast('已退出登录');
+      showToast('toasts.logoutSuccess');
     }
 
     // 检查访问控制
@@ -549,7 +604,7 @@
         }
       } catch (error) {
         console.error('检查访问控制失败:', error);
-        showToast('检查访问控制失败', 3000);
+        showToast('toasts.accessCheckFailed', 3000);
       }
     }
 
@@ -577,7 +632,7 @@
         }
       } catch (error) {
         console.error('验证访客失败:', error);
-        showToast('验证访客失败', 3000);
+        showToast('toasts.verifyFailed', 3000);
       }
     }
 
@@ -611,7 +666,7 @@
         }
       } catch (error) {
         console.error('加载密钥列表失败:', error);
-        showToast('加载密钥列表失败', 3000);
+        showToast('toasts.loadFailed', 3000);
       }
     }
     
@@ -689,12 +744,12 @@
         }) : '未知';
         
         // 显示余额或失效状态
-        const balanceDisplay = isValid ? key.balance : '失效';
+        const balanceDisplay = isValid ? key.balance : i18next.t('keyCard.invalid');
         
         keyElement.innerHTML = `
           <div class="key-card-top">
             <div class="key-text">${truncatedKey}</div>
-            <button class="copy-button">复制</button>
+            <button class="copy-button" data-i18n="keyCard.copyButton">复制</button>
           </div>
           <div class="key-card-middle">
             <div class="balance ${balanceClass}">
@@ -702,7 +757,7 @@
             </div>
           </div>
           <div class="key-card-bottom">
-            更新于 ${updateTime}
+            <span data-i18n="keyCard.updatedAt">更新于</span> ${updateTime}
           </div>
         `;
         
@@ -721,7 +776,7 @@
         copyButton.addEventListener('click', function(e) {
           e.stopPropagation();
           copyToClipboard(key.key);
-          showToast('密钥已复制到剪贴板', 2000);
+          showToast('toasts.copied', 2000);
         });
         
         keysContainer.appendChild(keyElement);
@@ -765,10 +820,10 @@
     // 复制单个密钥到剪贴板
     function copyToClipboard(text) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast('密钥已复制到剪贴板');
+        showToast('toasts.copied');
       }).catch(err => {
         console.error('复制失败:', err);
-        showToast('复制失败', true);
+        showToast('toasts.copyFailed', true);
       });
     }
 
@@ -780,10 +835,10 @@
       }
       
       navigator.clipboard.writeText(keys.join('\n')).then(() => {
-        showToast('所有密钥已复制（换行分隔）');
+        showToast('toasts.batchCopyNewline');
       }).catch(err => {
         console.error('批量复制失败:', err);
-        showToast('批量复制失败', true);
+        showToast('toasts.batchCopyFailed', true);
       });
     }
 
@@ -795,10 +850,10 @@
       }
       
       navigator.clipboard.writeText(keys.join(',')).then(() => {
-        showToast('所有密钥已复制（逗号分隔）');
+        showToast('toasts.batchCopyComma');
       }).catch(err => {
         console.error('批量复制失败:', err);
-        showToast('批量复制失败', true);
+        showToast('toasts.batchCopyFailed', true);
       });
     }
 
@@ -829,7 +884,10 @@
     document.getElementById('nextBtn').addEventListener('click', goToNextPage);
 
     // 页面加载时检查访问控制
-    window.onload = checkAccessControl;
+    window.onload = () => {
+      initI18next();
+      checkAccessControl();
+    };
 
     // 每10分钟自动刷新一次
     autoRefreshIntervalId = setInterval(refreshAllBalances, 600000);
@@ -843,7 +901,8 @@
 
     // 删除流式响应测试功能代码及相关函数
     document.addEventListener('DOMContentLoaded', function() {
-      loadKeys();
+      // 这个事件监听器可能与window.onload冲突，所以我们只在需要时调用loadKeys
+      // loadKeys(); 
     });
   </script>
 </body>

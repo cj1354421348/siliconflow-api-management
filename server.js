@@ -5,13 +5,58 @@ const path = require('path');
 const fetch = require('node-fetch');
 require('dotenv').config();
 
+// i18next for internationalization
+const i18next = require('i18next');
+const Backend = require('i18next-fs-backend');
+const middleware = require('i18next-http-middleware');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
 // 确定应用根目录
 const isProduction = process.pkg !== undefined;
 const appRootDir = isProduction ? path.dirname(process.execPath) : __dirname;
 console.log('应用根目录:', appRootDir);
 
-const app = express();
-const port = process.env.PORT || 3000;
+// 初始化i18next
+i18next
+  .use(Backend)
+  .use(middleware.LanguageDetector)
+  .init({
+    fallbackLng: 'zh-CN',
+    lng: 'zh-CN',
+    preload: ['zh-CN', 'en'],
+    ns: ['common', 'admin'],
+    defaultNS: 'common',
+    backend: {
+      loadPath: path.join(appRootDir, 'locales/{{lng}}/{{ns}}.json')
+    },
+    detection: {
+      // 从query参数、cookie、header、path中检测语言
+      order: ['query', 'cookie', 'header', 'path'],
+      // query参数的名称
+      lookupQuery: 'lng',
+      // cookie的名称
+      lookupCookie: 'i18next',
+      // header的名称
+      lookupHeader: 'accept-language',
+      // path中的语言参数位置
+      lookupPath: 'lng',
+      // cookie的域名
+      cookieDomain: 'localhost',
+      // cookie的路径
+      cookiePath: '/',
+      // cookie的安全设置
+      cookieSecure: false,
+      // 从query参数中忽略缓存
+      ignoreCase: true,
+      // 从path中检测语言时的分隔符
+      lookupFromPathIndex: 0
+    }
+  });
+
+// 使用i18next中间件
+app.use(middleware.handle(i18next));
 
 // 配置中间件
 app.use(cors());
@@ -1011,6 +1056,17 @@ app.post('/api/verify-guest', async (req, res) => {
   } catch (error) {
     console.error('验证访客失败:', error);
     res.status(500).json({ success: false, message: "验证访客时发生错误" });
+  }
+});
+
+// 获取翻译资源的路由
+app.get('/api/translations/:lng/:ns', (req, res) => {
+  const { lng, ns } = req.params;
+  const translation = i18next.getResourceBundle(lng, ns);
+  if (translation) {
+    res.json(translation);
+  } else {
+    res.status(404).json({ error: 'Translations not found' });
   }
 });
 

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>硅基流动API Key Management</title>
+  <title data-i18n="title">硅基流动API Key Management</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -312,73 +312,73 @@
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
       </svg>
     </div>
-    <h1>硅基流动API Key Management</h1>
-    <div class="subtitle">API密钥管理系统</div>
-    <button onclick="logoutAdmin()" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px;">登出</button>
+    <h1 data-i18n="title">硅基流动API Key Management</h1>
+    <div class="subtitle" data-i18n="subtitle">API密钥管理系统</div>
+    <button onclick="logoutAdmin()" class="btn btn-danger" style="position: absolute; top: 20px; right: 20px;" data-i18n="logoutButton">登出</button>
   </div>
 
   <div class="card">
-    <h2>系统配置</h2>
+    <h2 data-i18n="systemConfig">系统配置</h2>
     <div class="form-group">
-      <label for="adminUsername">管理员用户名</label>
+      <label for="adminUsername" data-i18n="configFields.adminUsername">管理员用户名</label>
       <input type="text" id="adminUsername" class="form-control">
     </div>
     <div class="form-group">
-      <label for="adminPassword">管理员密码</label>
+      <label for="adminPassword" data-i18n="configFields.adminPassword">管理员密码</label>
       <input type="password" id="adminPassword" class="form-control">
     </div>
     <div class="form-group">
-      <label for="authApiKey">验证API密钥 (用于验证用户访问本服务)</label>
+      <label for="authApiKey" data-i18n="configFields.authApiKey">验证API密钥 (用于验证用户访问本服务)</label>
       <input type="text" id="authApiKey" class="form-control">
     </div>
     <div class="form-group">
-      <label for="pageSize">每页显示数量</label>
+      <label for="pageSize" data-i18n="configFields.pageSize">每页显示数量</label>
       <input type="number" id="pageSize" class="form-control">
     </div>
     <div class="form-group">
-      <label for="accessControl">访问控制</label>
+      <label for="accessControl" data-i18n="configFields.accessControl">访问控制</label>
       <select id="accessControl" class="form-control">
-        <option value="open">完全开放</option>
-        <option value="restricted">部分开放</option>
-        <option value="private">完全私有</option>
+        <option value="open" data-i18n="configFields.accessControlOptions.open">完全开放</option>
+        <option value="restricted" data-i18n="configFields.accessControlOptions.restricted">部分开放</option>
+        <option value="private" data-i18n="configFields.accessControlOptions.private">完全私有</option>
       </select>
     </div>
     <div class="form-group">
-      <label for="guestPassword">访客密码</label>
+      <label for="guestPassword" data-i18n="configFields.guestPassword">访客密码</label>
       <input type="password" id="guestPassword" class="form-control">
     </div>
-    <button onclick="saveConfig()" class="btn btn-primary">保存配置</button>
+    <button onclick="saveConfig()" class="btn btn-primary" data-i18n="saveConfig">保存配置</button>
   </div>
 
   <div class="card">
-    <h2>密钥管理</h2>
+    <h2 data-i18n="keyManagement">密钥管理</h2>
     <div class="form-group">
-      <label for="newKey">新密钥</label>
+      <label for="newKey" data-i18n="addKey.label">新密钥</label>
       <div style="display: flex; gap: 10px;">
         <input type="text" id="newKey" class="form-control">
-        <button onclick="addKey()" class="btn btn-primary">添加密钥</button>
+        <button onclick="addKey()" class="btn btn-primary" data-i18n="addKey.button">添加密钥</button>
       </div>
     </div>
     
     <div class="form-group">
-      <label for="bulkKeys">批量添加密钥</label>
+      <label for="bulkKeys" data-i18n="bulkAdd.label">批量添加密钥</label>
       <textarea id="bulkKeys" class="bulk-add-area" placeholder="每行一个密钥，或用逗号分隔"></textarea>
-      <div class="textarea-hint">支持每行一个密钥，或用逗号分隔多个密钥</div>
-      <button onclick="addBulkKeys()" class="btn btn-primary">批量添加</button>
+      <div class="textarea-hint" data-i18n="bulkAdd.hint">支持每行一个密钥，或用逗号分隔多个密钥</div>
+      <button onclick="addBulkKeys()" class="btn btn-primary" data-i18n="bulkAdd.button">批量添加</button>
     </div>
     
     <div class="refresh-controls">
-      <button onclick="refreshAllBalances()" class="btn btn-primary">刷新所有余额</button>
-      <button onclick="deleteInvalidKeys()" class="btn btn-warning">删除所有失效密钥</button>
+      <button onclick="refreshAllBalances()" class="btn btn-primary" data-i18n="refreshControls.refreshAll">刷新所有余额</button>
+      <button onclick="deleteInvalidKeys()" class="btn btn-warning" data-i18n="refreshControls.deleteInvalid">删除所有失效密钥</button>
       <div class="auto-refresh">
-        <label for="autoRefresh">自动刷新:</label>
+        <label for="autoRefresh" data-i18n="refreshControls.autoRefresh">自动刷新:</label>
         <select id="autoRefreshInterval" class="form-control" onchange="setAutoRefresh()">
-          <option value="0">关闭</option>
-          <option value="60000">每分钟</option>
-          <option value="300000">每5分钟</option>
-          <option value="900000">每15分钟</option>
-          <option value="1800000">每30分钟</option>
-          <option value="3600000">每小时</option>
+          <option value="0" data-i18n="refreshControls.autoRefreshOptions.off">关闭</option>
+          <option value="60000" data-i18n="refreshControls.autoRefreshOptions.1min">每分钟</option>
+          <option value="300000" data-i18n="refreshControls.autoRefreshOptions.5min">每5分钟</option>
+          <option value="900000" data-i18n="refreshControls.autoRefreshOptions.15min">每15分钟</option>
+          <option value="1800000" data-i18n="refreshControls.autoRefreshOptions.30min">每30分钟</option>
+          <option value="3600000" data-i18n="refreshControls.autoRefreshOptions.1hour">每小时</option>
         </select>
       </div>
     </div>
@@ -386,15 +386,15 @@
     <div id="stats" class="stats" style="display: none;">
       <div class="stat-item">
         <div class="stat-value total-keys" id="totalKeys">0</div>
-        <div class="stat-label">总API Keys</div>
+        <div class="stat-label" data-i18n="stats.totalKeys">总API Keys</div>
       </div>
       <div class="stat-item">
         <div class="stat-value valid-keys" id="validKeys">0</div>
-        <div class="stat-label">有效API Keys</div>
+        <div class="stat-label" data-i18n="stats.validKeys">有效API Keys</div>
       </div>
       <div class="stat-item">
         <div class="stat-value total-balance" id="totalBalance">¥0.00</div>
-        <div class="stat-label">总额度</div>
+        <div class="stat-label" data-i18n="stats.totalBalance">总额度</div>
       </div>
     </div>
 
@@ -403,11 +403,68 @@
 
   <div id="toast" class="toast"></div>
 
+  <div class="language-switcher" style="position: fixed; top: 20px; right: 120px;">
+    <select id="languageSwitcher">
+      <option value="zh-CN">中文</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.14/i18next.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
+
   <script>
     let adminCredentials = null;
     let autoRefreshIntervalId = null;
     const CRED_STORAGE_KEY = 'siliconflow_admin_cred';
     const ENC_SECRET = 'sf_admin_secure_key'; // 简单加密密钥
+
+    // 初始化i18next
+    function initI18next() {
+      // 获取语言选择器
+      const languageSwitcher = document.getElementById('languageSwitcher');
+      
+      // 从localStorage获取保存的语言设置
+      const savedLanguage = localStorage.getItem('language') || 'zh-CN';
+      languageSwitcher.value = savedLanguage;
+      
+      // 初始化i18next
+      i18next
+        .use(i18nextHttpBackend)
+        .init({
+          lng: savedLanguage,
+          fallbackLng: 'zh-CN',
+          ns: ['admin'],
+          defaultNS: 'admin',
+          backend: {
+            loadPath: '/api/translations/{{lng}}/{{ns}}'
+          }
+        }, function(err, t) {
+          // 初始化完成后翻译页面
+          translatePage();
+        });
+
+      // 绑定语言切换事件
+      languageSwitcher.addEventListener('change', function() {
+        const selectedLanguage = this.value;
+        i18next.changeLanguage(selectedLanguage, () => {
+          localStorage.setItem('language', selectedLanguage);
+          translatePage(); // 重新翻译页面
+        });
+      });
+    }
+
+    // 翻译页面元素
+    function translatePage() {
+      // 翻译带有data-i18n属性的元素
+      document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        const translation = i18next.t(key);
+        if (translation !== key) { // 只有当翻译存在时才更新
+          element.textContent = translation;
+        }
+      });
+    }
 
     // 简单的加密函数
     function encrypt(text, secret) {
@@ -476,8 +533,8 @@
         
         // 如果没有存储的凭据，则请求用户输入
         if (!adminCredentials) {
-          const username = prompt('请输入管理员用户名:');
-          const password = prompt('请输入管理员密码:');
+          const username = prompt(i18next.t('prompts.adminUsername'));
+          const password = prompt(i18next.t('prompts.adminPassword'));
           if (username && password) {
             adminCredentials = btoa(username + ':' + password);
             // 暂时不保存，等验证成功后再保存
@@ -491,7 +548,7 @@
     async function verifyAdminCredentials() {
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return false;
       }
 
@@ -527,7 +584,7 @@
       try {
         const credentials = getAdminCredentials();
         if (!credentials) {
-          alert('请输入管理员凭据');
+          alert(i18next.t('toasts.invalidCredentials'));
           return;
         }
 
@@ -560,7 +617,7 @@
     async function saveConfig() {
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -588,7 +645,7 @@
         
         const data = await response.json();
         if (data.success) {
-          showToast('配置保存成功', 2000);
+          showToast(i18next.t('toasts.configSaved'), 2000);
           
           // 检查管理员凭据是否已变更
           const [username, password] = atob(credentials).split(':');
@@ -597,12 +654,12 @@
             const newCredentials = btoa(originalUsername + ':' + originalPassword);
             adminCredentials = newCredentials;
             saveCredentialsToStorage(newCredentials);
-            showToast('管理员凭据已更新', 3000);
+            showToast(i18next.t('toasts.credentialsUpdated'), 3000);
           }
           
           loadKeys();
         } else {
-          showToast(data.message || '保存失败', 3000, true);
+          showToast(data.message || i18next.t('toasts.saveFailed'), 3000, true);
           if (data.message && data.message.includes('未授权')) {
             adminCredentials = null;
             clearStoredCredentials(); // 清除无效的凭据
@@ -620,7 +677,7 @@
     async function addKey() {
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -642,11 +699,11 @@
         
         const data = await response.json();
         if (data.success) {
-          alert(data.message || '密钥添加成功');
+          alert(data.message || i18next.t('toasts.keyAdded'));
           document.getElementById('newKey').value = '';
           loadKeys();
         } else {
-          alert(data.message || '添加密钥失败');
+          alert(data.message || i18next.t('toasts.keyAddFailed'));
           if (data.message && data.message.includes('已存在')) {
             document.getElementById('newKey').value = '';
           }
@@ -661,7 +718,7 @@
     async function addBulkKeys() {
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -708,7 +765,7 @@
         }
       }
 
-      alert(`批量添加结果：成功 ${successCount} 个，失败 ${failCount} 个，已存在 ${existsCount} 个`);
+      alert(i18next.t('toasts.bulkAddResult', { success: successCount, fail: failCount, exists: existsCount }));
       document.getElementById('bulkKeys').value = '';
       loadKeys();
     }
@@ -718,7 +775,7 @@
       try {
         const credentials = getAdminCredentials();
         if (!credentials) {
-          alert('请输入管理员凭据');
+          alert(i18next.t('toasts.invalidCredentials'));
           return;
         }
 
@@ -741,19 +798,19 @@
                 <div class="key-value">${key.key}</div>
                 <div class="key-balance">¥${key.balance}</div>
                 <div class="key-status ${key.isValid ? 'status-valid' : 'status-invalid'}">
-                  ${key.isValid ? '有效' : '失效'}
+                  ${key.isValid ? i18next.t('keyItem.valid') : i18next.t('keyItem.invalid')}
                 </div>
-                <div class="key-time">创建于 ${new Date(key.created_at).toLocaleString()}</div>
-                <div class="key-time">更新于 ${new Date(key.last_updated).toLocaleString()}</div>
+                <div class="key-time">${i18next.t('keyItem.createdAt')} ${new Date(key.created_at).toLocaleString()}</div>
+                <div class="key-time">${i18next.t('keyItem.updatedAt')} ${new Date(key.last_updated).toLocaleString()}</div>
               </div>
               <div class="key-controls">
-                <button onclick="refreshKeyBalance('${key.key}')" class="btn-icon btn-refresh" title="刷新余额">
+                <button onclick="refreshKeyBalance('${key.key}')" class="btn-icon btn-refresh" title="${i18next.t('keyItem.refreshBalance')}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M23 4v6h-6M1 20v-6h6"></path>
                     <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"></path>
                   </svg>
                 </button>
-                <button onclick="deleteKey('${key.key}')" class="btn-icon btn-delete" title="删除密钥">
+                <button onclick="deleteKey('${key.key}')" class="btn-icon btn-delete" title="${i18next.t('keyItem.deleteKey')}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
                   </svg>
@@ -777,7 +834,7 @@
     async function refreshKeyBalance(key) {
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -805,7 +862,7 @@
     async function refreshAllBalances() {
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -846,13 +903,13 @@
 
     // 删除密钥
     async function deleteKey(key) {
-      if (!confirm(`确定要删除密钥 ${key} 吗？`)) {
+      if (!confirm(i18next.t('confirmations.deleteKey', { key: key }))) {
         return;
       }
       
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -868,10 +925,10 @@
         
         const data = await response.json();
         if (data.success) {
-          alert(data.message || '密钥删除成功');
+          alert(data.message || i18next.t('toasts.keyDeleted'));
           loadKeys();
         } else {
-          alert(data.message || '删除密钥失败');
+          alert(data.message || i18next.t('toasts.keyDeleteFailed'));
         }
       } catch (error) {
         console.error('删除密钥失败:', error);
@@ -881,13 +938,13 @@
 
     // 删除所有失效的密钥
     async function deleteInvalidKeys() {
-      if (!confirm('确定要删除所有失效的密钥吗？此操作不可撤销!')) {
+      if (!confirm(i18next.t('confirmations.deleteInvalidKeys'))) {
         return;
       }
       
       const credentials = getAdminCredentials();
       if (!credentials) {
-        alert('请输入管理员凭据');
+        alert(i18next.t('toasts.invalidCredentials'));
         return;
       }
 
@@ -909,12 +966,12 @@
           .map(key => key.key);
         
         if (invalidKeys.length === 0) {
-          alert('没有找到失效的密钥');
+          alert(i18next.t('toasts.noInvalidKeys'));
           return;
         }
 
         // 显示确认对话框，显示将要删除的密钥数量
-        if (!confirm(`将要删除 ${invalidKeys.length} 个失效密钥，确定继续吗？`)) {
+        if (!confirm(i18next.t('confirmations.deleteInvalidKeysCount', { count: invalidKeys.length }))) {
           return;
         }
 
@@ -949,13 +1006,13 @@
         }
 
         // 显示删除结果
-        showToast(`删除完成: 成功 ${successCount} 个，失败 ${failCount} 个`, 3000);
+        showToast(i18next.t('toasts.deleteInvalidComplete', { success: successCount, fail: failCount }), 3000);
         
         // 重新加载密钥列表
         loadKeys();
       } catch (error) {
         console.error('删除失效密钥失败:', error);
-        showToast('删除失效密钥失败: ' + (error.message || '未知错误'), 3000, true);
+        showToast(i18next.t('toasts.deleteInvalidFailed') + ': ' + (error.message || '未知错误'), 3000, true);
       }
     }
 
@@ -986,6 +1043,7 @@
 
     // 页面加载时验证凭据并加载数据
     window.onload = async () => {
+      initI18next();
       if (await verifyAdminCredentials()) {
         loadConfig();
         loadKeys();

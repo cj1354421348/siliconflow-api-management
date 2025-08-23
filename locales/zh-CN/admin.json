@@ -1,0 +1,80 @@
+{
+  "title": "Siliconflow API Key Management",
+  "subtitle": "API密钥管理系统",
+  "logoutButton": "登出",
+  "systemConfig": "系统配置",
+  "configFields": {
+    "adminUsername": "管理员用户名",
+    "adminPassword": "管理员密码",
+    "authApiKey": "验证API密钥 (用于验证用户访问本服务)",
+    "pageSize": "每页显示数量",
+    "accessControl": "访问控制",
+    "accessControlOptions": {
+      "open": "完全开放",
+      "restricted": "部分开放",
+      "private": "完全私有"
+    },
+    "guestPassword": "访客密码"
+  },
+  "saveConfig": "保存配置",
+  "keyManagement": "密钥管理",
+  "addKey": {
+    "label": "新密钥",
+    "button": "添加密钥"
+  },
+  "bulkAdd": {
+    "label": "批量添加密钥",
+    "hint": "支持每行一个密钥，或用逗号分隔多个密钥",
+    "button": "批量添加"
+  },
+  "refreshControls": {
+    "refreshAll": "刷新所有余额",
+    "deleteInvalid": "删除所有失效密钥",
+    "autoRefresh": "自动刷新",
+    "autoRefreshOptions": {
+      "off": "关闭",
+      "1min": "每分钟",
+      "5min": "每5分钟",
+      "15min": "每15分钟",
+      "30min": "每30分钟",
+      "1hour": "每小时"
+    }
+  },
+  "stats": {
+    "totalKeys": "总API Keys",
+    "validKeys": "有效API Keys",
+    "totalBalance": "总额度"
+  },
+  "keyItem": {
+    "valid": "有效",
+    "invalid": "失效",
+    "createdAt": "创建于",
+    "updatedAt": "更新于",
+    "refreshBalance": "刷新余额",
+    "deleteKey": "删除密钥"
+  },
+  "confirmations": {
+    "deleteKey": "确定要删除密钥 {{key}} 吗？",
+    "deleteInvalidKeys": "确定要删除所有失效的密钥吗？此操作不可撤销!",
+    "deleteInvalidKeysCount": "将要删除 {{count}} 个失效密钥，确定继续吗？"
+  },
+  "toasts": {
+    "configSaved": "配置保存成功",
+    "credentialsUpdated": "管理员凭据已更新",
+    "saveFailed": "保存失败",
+    "keyAdded": "密钥添加成功",
+    "keyAddFailed": "添加密钥失败",
+    "keyExists": "密钥已存在",
+    "bulkAddResult": "批量添加结果：成功 {{success}} 个，失败 {{fail}} 个，已存在 {{exists}} 个",
+    "keyDeleted": "密钥删除成功",
+    "keyDeleteFailed": "删除密钥失败",
+    "deleteInvalidComplete": "删除完成: 成功 {{success}} 个，失败 {{fail}} 个",
+    "deleteInvalidFailed": "删除失效密钥失败",
+    "noInvalidKeys": "没有找到失效的密钥",
+    "invalidCredentials": "凭据无效"
+  },
+  "prompts": {
+    "adminUsername": "请输入管理员用户名:",
+    "adminPassword": "请输入管理员密码:"
+  }
+}

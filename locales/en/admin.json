@@ -1,0 +1,80 @@
+{
+  "title": "Siliconflow API Key Management",
+  "subtitle": "API Key Management System",
+  "logoutButton": "Logout",
+  "systemConfig": "System Configuration",
+  "configFields": {
+    "adminUsername": "Admin Username",
+    "adminPassword": "Admin Password",
+    "authApiKey": "Auth API Key (used to verify user access to this service)",
+    "pageSize": "Keys Per Page",
+    "accessControl": "Access Control",
+    "accessControlOptions": {
+      "open": "Fully Open",
+      "restricted": "Partially Open",
+      "private": "Fully Private"
+    },
+    "guestPassword": "Guest Password"
+  },
+  "saveConfig": "Save Configuration",
+  "keyManagement": "Key Management",
+  "addKey": {
+    "label": "New Key",
+    "button": "Add Key"
+  },
+  "bulkAdd": {
+    "label": "Bulk Add Keys",
+    "hint": "One key per line, or comma separated",
+    "button": "Bulk Add"
+  },
+  "refreshControls": {
+    "refreshAll": "Refresh All Balances",
+    "deleteInvalid": "Delete All Invalid Keys",
+    "autoRefresh": "Auto Refresh",
+    "autoRefreshOptions": {
+      "off": "Off",
+      "1min": "Every Minute",
+      "5min": "Every 5 Minutes",
+      "15min": "Every 15 Minutes",
+      "30min": "Every 30 Minutes",
+      "1hour": "Every Hour"
+    }
+  },
+  "stats": {
+    "totalKeys": "Total API Keys",
+    "validKeys": "Valid API Keys",
+    "totalBalance": "Total Balance"
+  },
+  "keyItem": {
+    "valid": "Valid",
+    "invalid": "Invalid",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "refreshBalance": "Refresh Balance",
+    "deleteKey": "Delete Key"
+  },
+  "confirmations": {
+    "deleteKey": "Are you sure you want to delete key {{key}}?",
+    "deleteInvalidKeys": "Are you sure you want to delete all invalid keys? This action cannot be undone!",
+    "deleteInvalidKeysCount": "About to delete {{count}} invalid keys, continue?"
+  },
+  "toasts": {
+    "configSaved": "Configuration saved successfully",
+    "credentialsUpdated": "Admin credentials updated",
+    "saveFailed": "Save failed",
+    "keyAdded": "Key added successfully",
+    "keyAddFailed": "Failed to add key",
+    "keyExists": "Key already exists",
+    "bulkAddResult": "Bulk add result: {{success}} succeeded, {{fail}} failed, {{exists}} already existed",
+    "keyDeleted": "Key deleted successfully",
+    "keyDeleteFailed": "Failed to delete key",
+    "deleteInvalidComplete": "Deletion complete: {{success}} succeeded, {{fail}} failed",
+    "deleteInvalidFailed": "Failed to delete invalid keys",
+    "noInvalidKeys": "No invalid keys found",
+    "invalidCredentials": "Invalid credentials"
+  },
+  "prompts": {
+    "adminUsername": "Please enter admin username:",
+    "adminPassword": "Please enter admin password:"
+  }
+}
