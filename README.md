@@ -151,6 +151,8 @@ curl -X POST "http://localhost:3000/v1/chat/completions" \
 
 为了提高前端代码的可维护性，我们对HTML文件进行了重构，将样式和脚本分离到独立的文件中。详细信息请参阅 [前端优化文档](docs/frontend-optimization.md)。
 
+为了进一步提高代码质量，我们将大型JavaScript文件拆分为模块化结构。详细信息请参阅 [前端模块化重构指南](docs/frontend-modularization.md)。
+
 ### 静态资源本地化
 
 为了提高应用的可靠性和安全性，我们将原本通过CDN引用的JavaScript库改为本地托管。详细信息请参阅 [静态资源本地化文档](docs/local-static-assets.md)。
@@ -173,3 +175,39 @@ curl -X POST "http://localhost:3000/v1/chat/completions" \
 3. 提交更改：`git commit -am '添加新特性'`
 4. 推送到分支：`git push origin feature/my-new-feature`
 5. 提交 Pull Request
+
+## 部署指南
+
+### 本地部署
+
+1. 克隆仓库：
+   ```bash
+   git clone [仓库地址]
+   cd siliconflow-api-management
+   ```
+
+2. 安装依赖：
+   ```bash
+   npm install
+   ```
+
+3. 配置环境变量：
+   ```bash
+   cp .env.example .env
+   # 编辑 .env 文件填写配置信息
+   ```
+
+4. 启动服务：
+   ```bash
+   npm start
+   ```
+
+5. 访问应用：
+   - 用户界面：http://localhost:3000
+   - 管理员界面：http://localhost:3000/admin
+
+详细部署说明请参阅 [完整部署指南](docs/deployment-guide.md)。
+
+### 构建和优化
+
+项目支持构建和优化以减小文件大小并提高性能。详细信息请参阅 [构建和优化指南](docs/build-optimization.md)。

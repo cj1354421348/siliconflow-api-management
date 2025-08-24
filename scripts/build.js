@@ -35,17 +35,25 @@ if (fs.existsSync(assetsDir)) {
   });
 }
 
+// 复制CSS目录
+console.log('Copying CSS files...');
+const cssDir = path.join(publicDir, 'css');
+const buildCssDir = path.join(buildPublicDir, 'css');
+if (!fs.existsSync(buildCssDir)) {
+  fs.mkdirSync(buildCssDir, { recursive: true });
+}
+
+const cssFiles = fs.readdirSync(cssDir);
+cssFiles.forEach(file => {
+  fs.copyFileSync(path.join(cssDir, file), path.join(buildCssDir, file));
+});
+
 // 压缩CSS文件
 console.log('Minifying CSS files...');
 execSync(`npx cleancss -o ${path.join(buildPublicDir, 'css', 'admin.css')} ${path.join(publicDir, 'css', 'admin.css')}`, { stdio: 'inherit' });
 execSync(`npx cleancss -o ${path.join(buildPublicDir, 'css', 'index.css')} ${path.join(publicDir, 'css', 'index.css')}`, { stdio: 'inherit' });
 
-// 压缩JavaScript文件
-console.log('Minifying JavaScript files...');
-execSync(`npx terser ${path.join(publicDir, 'js', 'admin.js')} -o ${path.join(buildPublicDir, 'js', 'admin.js')} --compress --mangle`, { stdio: 'inherit' });
-execSync(`npx terser ${path.join(publicDir, 'js', 'index.js')} -o ${path.join(buildPublicDir, 'js', 'index.js')} --compress --mangle`, { stdio: 'inherit' });
-
-// 复制库文件（这些已经是压缩的）
+// 复制JavaScript库文件（这些已经是压缩的）
 console.log('Copying library files...');
 const libDir = path.join(publicDir, 'js', 'lib');
 const buildLibDir = path.join(buildPublicDir, 'js', 'lib');
@@ -57,6 +65,17 @@ const libFiles = fs.readdirSync(libDir);
 libFiles.forEach(file => {
   fs.copyFileSync(path.join(libDir, file), path.join(buildLibDir, file));
 });
+
+// 复制并压缩JavaScript主文件
+console.log('Minifying main JavaScript files...');
+execSync(`npx terser ${path.join(publicDir, 'js', 'admin-main.js')} -o ${path.join(buildPublicDir, 'js', 'admin-main.js')} --compress --mangle`, { stdio: 'inherit' });
+execSync(`npx terser ${path.join(publicDir, 'js', 'index-main.js')} -o ${path.join(buildPublicDir, 'js', 'index-main.js')} --compress --mangle`, { stdio: 'inherit' });
+
+// 复制JavaScript工具文件
+console.log('Copying JavaScript utility files...');
+const utilsDir = path.join(publicDir, 'js', 'utils');
+const buildUtilsDir = path.join(buildPublicDir, 'js', 'utils');
+copyDir(utilsDir, buildUtilsDir);
 
 // 复制服务器文件
 console.log('Copying server files...');
