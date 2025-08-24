@@ -2,6 +2,10 @@
 
 此系统用于管理硅基流动API密钥，提供密钥管理、余额检测和API请求转发功能。
 
+## 项目结构
+
+有关项目的详细结构说明，请参阅 [项目结构文档](docs/project-structure.md)。
+
 ## 系统要求
 
 - Node.js 14.x 或更高版本
@@ -130,6 +134,37 @@ curl -X POST "http://localhost:3000/v1/chat/completions" \
 - PAGE_SIZE: 每页显示的密钥数量
 - ACCESS_CONTROL: 访问控制模式(open/restricted/private)
 - GUEST_PASSWORD: 访客密码(用于restricted模式)
+
+## 开发指南
+
+### 项目结构
+
+项目采用模块化结构，主要分为以下几个部分：
+
+1. **配置层 (src/config/)**: 处理数据库连接和应用配置
+2. **控制器层 (src/controllers/)**: 包含业务逻辑处理
+3. **中间件层 (src/middleware/)**: 处理认证等横切关注点
+4. **路由层 (src/routes/)**: 定义API路由
+5. **工具层 (src/utils/)**: 提供通用工具函数
+
+### 前端优化
+
+为了提高前端代码的可维护性，我们对HTML文件进行了重构，将样式和脚本分离到独立的文件中。详细信息请参阅 [前端优化文档](docs/frontend-optimization.md)。
+
+### 静态资源本地化
+
+为了提高应用的可靠性和安全性，我们将原本通过CDN引用的JavaScript库改为本地托管。详细信息请参阅 [静态资源本地化文档](docs/local-static-assets.md)。
+
+### 数据库路径问题
+
+在重构过程中，我们遇到了数据库路径变更导致数据无法访问的问题。详细信息请参阅 [数据库路径问题说明](docs/database-path-issue.md)。
+
+### 添加新功能
+
+1. 在`src/controllers/`中创建新的控制器文件
+2. 在`src/routes/`中创建对应的路由文件
+3. 在`src/routes/index.js`中注册新路由
+4. 如果需要认证，在`src/middleware/`中添加相应的中间件
 
 ## 贡献指南
 
