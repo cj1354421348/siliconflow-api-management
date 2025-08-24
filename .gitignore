@@ -52,4 +52,4 @@ coverage/
 # 其他文件
 *.bak
 *.backup
-*.old 
+*.old build/ 
