@@ -78,7 +78,8 @@ export async function verifyGuest() {
       // 保存token到本地存储
       saveTokenToStorage(guestToken);
       document.getElementById('authForm').style.display = 'none';
-      loadKeys();
+      // 注意：这里不应该直接调用loadKeys，因为这个函数在其他模块中
+      // 访问控制检查完成后会自动加载密钥
     } else {
       showToast(data.message || '验证失败', 3000);
     }

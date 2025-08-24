@@ -13,7 +13,9 @@ window.copyAllKeysWithComma = copyAllKeysWithComma;
 
 // 页面加载时检查访问控制
 window.onload = () => {
+  console.log('页面加载完成，初始化i18next...');
   initI18next();
+  console.log('检查访问控制...');
   checkAccessControl();
 };
 

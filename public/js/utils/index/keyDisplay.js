@@ -1,1 +1,240 @@
-let allKeys = [];\nlet currentPage = 1;\nlet keysPerPage = 12;\nlet guestToken = null;\n\n// 加载密钥列表\nexport async function loadKeys() {\n  try {\n    const headers = {};\n    const storedToken = loadTokenFromStorage();\n    if (storedToken) {\n      headers['Authorization'] = `Bearer ${storedToken}`;\n    }\n    \n    const response = await fetch('/api/keys', { headers });\n    const data = await response.json();\n    \n    if (data.success) {\n      allKeys = data.data;\n      \n      // 显示控制面板和统计\n      document.getElementById('copyControls').style.display = 'flex';\n      document.getElementById('pagination').style.display = 'flex';\n      document.getElementById('stats').style.display = 'flex';\n      document.getElementById('logoutBtn').style.display = 'block';\n      \n      // 更新统计信息\n      updateStats();\n      \n      // 显示当前页面的密钥\n      displayCurrentPage();\n    } else {\n      showToast(data.message || '加载失败', 3000);\n    }\n  } catch (error) {\n    console.error('加载密钥列表失败:', error);\n    showToast('toasts.loadFailed', 3000);\n  }\n}\n\n// 更新统计信息\nexport function updateStats() {\n  const totalKeys = allKeys.length;\n  const validKeys = allKeys.filter(key => key.isValid !== false && parseFloat(key.balance || 0) > 0).length;\n  const totalBalance = allKeys.reduce((sum, key) => sum + parseFloat(key.balance || 0), 0).toFixed(2);\n  \n  document.getElementById('totalKeys').textContent = totalKeys;\n  document.getElementById('validKeys').textContent = validKeys;\n  document.getElementById('totalBalance').textContent = `¥${totalBalance}`;\n}\n\n// 显示当前页面的密钥\nexport function displayCurrentPage() {\n  const startIndex = (currentPage - 1) * keysPerPage;\n  const endIndex = Math.min(startIndex + keysPerPage, allKeys.length);\n  \n  const keysContainer = document.getElementById('keysContainer');\n  keysContainer.innerHTML = '';\n  \n  // 首先按余额从高到低排序\n  let keysToDisplay = [...allKeys];\n  keysToDisplay.sort((a, b) => {\n    // 如果密钥无效或余额为零，排在最后面\n    const balanceA = (!a.isValid || parseFloat(a.balance || 0) <= 0) ? -1 : parseFloat(a.balance || 0);\n    const balanceB = (!b.isValid || parseFloat(b.balance || 0) <= 0) ? -1 : parseFloat(b.balance || 0);\n    return balanceB - balanceA; // 降序排列\n  });\n  \n  // 使用排序后的数组获取当前页的密钥\n  keysToDisplay = keysToDisplay.slice(startIndex, endIndex);\n  \n  // 显示每个密钥\n  keysToDisplay.forEach(key => {\n    const keyElement = document.createElement('div');\n    keyElement.className = 'key-card';\n    \n    // 检查密钥是否有效\n    const isValid = key.isValid && parseFloat(key.balance || 0) > 0;\n    \n    // 计算余额颜色类\n    let balanceClass = 'balance-zero';\n    const balance = parseFloat(key.balance || 0);\n    \n    if (!isValid) {\n      balanceClass = 'balance-invalid';\n    } else if (balance > 1000) {\n      balanceClass = 'balance-ultrahigh';\n    } else if (balance >= 500) {\n      balanceClass = 'balance-veryhigh';\n    } else if (balance >= 100) {\n      balanceClass = 'balance-high';\n    } else if (balance >= 50) {\n      balanceClass = 'balance-mediumhigh';\n    } else if (balance >= 10) {\n      balanceClass = 'balance-medium';\n    } else if (balance >= 5) {\n      balanceClass = 'balance-mediumlow';\n    } else if (balance > 0) {\n      balanceClass = 'balance-low';\n    }\n    \n    // 处理密钥显示格式 (隐藏中间部分)\n    const truncatedKey = truncateKey(key.key);\n    \n    // 格式化更新时间\n    const updateTime = key.last_updated ? new Date(key.last_updated).toLocaleString('zh-CN', {\n      year: 'numeric',\n      month: '2-digit',\n      day: '2-digit',\n      hour: '2-digit',\n      minute: '2-digit'\n    }) : '未知';\n    \n    // 显示余额或失效状态\n    const balanceDisplay = isValid ? key.balance : i18next.t('keyCard.invalid');\n    \n    keyElement.innerHTML = `\n      <div class=\"key-card-top\">\n        <div class=\"key-text\">${truncatedKey}</div>\n        <button class=\"copy-button\" data-i18n=\"keyCard.copyButton\">复制</button>\n      </div>\n      <div class=\"key-card-middle\">\n        <div class=\"balance ${balanceClass}\">\n          ${balanceDisplay}\n        </div>\n      </div>\n      <div class=\"key-card-bottom\">\n        <span data-i18n=\"keyCard.updatedAt\">更新于</span> ${updateTime}\n      </div>\n    `;\n    \n    // 添加hover效果提示\n    keyElement.setAttribute('title', '点击查看完整密钥');\n    \n    // 为每个密钥卡片添加点击事件\n    keyElement.addEventListener('click', function(e) {\n      if (!e.target.closest('.copy-button')) {\n        showToast(`密钥: ${key.key}`, 3000);\n      }\n    });\n    \n    // 为复制按钮添加点击事件\n    const copyButton = keyElement.querySelector('.copy-button');\n    copyButton.addEventListener('click', function(e) {\n      e.stopPropagation();\n      copyToClipboard(key.key);\n      showToast('toasts.copied', 2000);\n    });\n    \n    keysContainer.appendChild(keyElement);\n  });\n  \n  // 更新分页信息\n  const totalPages = Math.ceil(allKeys.length / keysPerPage);\n  document.getElementById('currentPage').textContent = currentPage;\n  document.getElementById('totalPages').textContent = totalPages;\n  \n  // 更新分页按钮状态\n  document.getElementById('prevBtn').disabled = currentPage === 1;\n  document.getElementById('nextBtn').disabled = currentPage === totalPages;\n}\n\n// 处理密钥显示格式，隐藏中间部分\nexport function truncateKey(key) {\n  if (key.length <= 15) return key;\n  const start = key.substring(0, 10);\n  const end = key.substring(key.length - 5);\n  return start + '...' + end;\n}\n\n// 切换到上一页\nexport function goToPrevPage() {\n  if (currentPage > 1) {\n    currentPage--;\n    displayCurrentPage();\n  }\n}\n\n// 切换到下一页\nexport function goToNextPage() {\n  const totalPages = Math.ceil(allKeys.length / keysPerPage);\n  if (currentPage < totalPages) {\n    currentPage++;\n    displayCurrentPage();\n  }\n}\n\n// 复制单个密钥到剪贴板\nexport function copyToClipboard(text) {\n  navigator.clipboard.writeText(text).then(() => {\n    showToast('toasts.copied');\n  }).catch(err => {\n    console.error('复制失败:', err);\n    showToast('toasts.copyFailed', true);\n  });\n}\n\n// 批量复制所有密钥(以换行分隔)\nexport function copyAllKeysWithNewline() {\n  const keys = allKeys.map(item => item.key);\n  if (keys.length === 0) {\n    return;\n  }\n  \n  navigator.clipboard.writeText(keys.join('\\n')).then(() => {\n    showToast('toasts.batchCopyNewline');\n  }).catch(err => {\n    console.error('批量复制失败:', err);\n    showToast('toasts.batchCopyFailed', true);\n  });\n}\n\n// 批量复制所有密钥(以逗号分隔)\nexport function copyAllKeysWithComma() {\n  const keys = allKeys.map(item => item.key);\n  if (keys.length === 0) {\n    return;\n  }\n  \n  navigator.clipboard.writeText(keys.join(',')).then(() => {\n    showToast('toasts.batchCopyComma');\n  }).catch(err => {\n    console.error('批量复制失败:', err);\n    showToast('toasts.batchCopyFailed', true);\n  });\n}
+import { loadTokenFromStorage } from './auth.js';
+import { showToast } from './ui.js';
+
+let allKeys = [];
+let currentPage = 1;
+let keysPerPage = 12;
+let guestToken = null;
+
+// Load keys list
+export async function loadKeys() {
+  try {
+    console.log('Start loading keys...');
+    const headers = {};
+    const storedToken = loadTokenFromStorage();
+    console.log('Stored token:', storedToken);
+    if (storedToken) {
+      headers['Authorization'] = `Bearer ${storedToken}`;
+    }
+    
+    console.log('Sending request to /api/keys...');
+    const response = await fetch('/api/keys', { headers });
+    console.log('Received response:', response.status);
+    const data = await response.json();
+    console.log('Parsed data:', data);
+    
+    if (data.success) {
+      allKeys = data.data;
+      console.log('Received keys:', allKeys);
+      
+      // Show control panel and statistics
+      document.getElementById('copyControls').style.display = 'flex';
+      document.getElementById('pagination').style.display = 'flex';
+      document.getElementById('stats').style.display = 'flex';
+      document.getElementById('logoutBtn').style.display = 'block';
+      
+      // Update statistics
+      updateStats();
+      
+      // Display current page keys
+      displayCurrentPage();
+    } else {
+      console.log('Failed to load keys:', data.message);
+      showToast(data.message || 'Load failed', 3000);
+    }
+  } catch (error) {
+    console.error('Failed to load keys list:', error);
+    showToast('toasts.loadFailed', 3000);
+  }
+}
+
+// Update statistics
+export function updateStats() {
+  console.log('Updating statistics...');
+  const totalKeys = allKeys.length;
+  const validKeys = allKeys.filter(key => key.isValid !== false && parseFloat(key.balance || 0) > 0).length;
+  const totalBalance = allKeys.reduce((sum, key) => sum + parseFloat(key.balance || 0), 0).toFixed(2);
+  
+  document.getElementById('totalKeys').textContent = totalKeys;
+  document.getElementById('validKeys').textContent = validKeys;
+  document.getElementById('totalBalance').textContent = `¥${totalBalance}`;
+}
+
+// Display current page keys
+export function displayCurrentPage() {
+  console.log('Displaying current page keys...');
+  const startIndex = (currentPage - 1) * keysPerPage;
+  const endIndex = Math.min(startIndex + keysPerPage, allKeys.length);
+  
+  const keysContainer = document.getElementById('keysContainer');
+  keysContainer.innerHTML = '';
+  
+  // First sort by balance from high to low
+  let keysToDisplay = [...allKeys];
+  keysToDisplay.sort((a, b) => {
+    // If key is invalid or balance is zero, put it at the end
+    const balanceA = (!a.isValid || parseFloat(a.balance || 0) <= 0) ? -1 : parseFloat(a.balance || 0);
+    const balanceB = (!b.isValid || parseFloat(b.balance || 0) <= 0) ? -1 : parseFloat(b.balance || 0);
+    return balanceB - balanceA; // Descending order
+  });
+  
+  // Use sorted array to get current page keys
+  keysToDisplay = keysToDisplay.slice(startIndex, endIndex);
+  console.log('Keys to display:', keysToDisplay);
+  
+  // Display each key
+  keysToDisplay.forEach(key => {
+    const keyElement = document.createElement('div');
+    keyElement.className = 'key-card';
+    
+    // Check if key is valid
+    const isValid = key.isValid && parseFloat(key.balance || 0) > 0;
+    
+    // Calculate balance color class
+    let balanceClass = 'balance-zero';
+    const balance = parseFloat(key.balance || 0);
+    
+    if (!isValid) {
+      balanceClass = 'balance-invalid';
+    } else if (balance > 1000) {
+      balanceClass = 'balance-ultrahigh';
+    } else if (balance >= 500) {
+      balanceClass = 'balance-veryhigh';
+    } else if (balance >= 100) {
+      balanceClass = 'balance-high';
+    } else if (balance >= 50) {
+      balanceClass = 'balance-mediumhigh';
+    } else if (balance >= 10) {
+      balanceClass = 'balance-medium';
+    } else if (balance >= 5) {
+      balanceClass = 'balance-mediumlow';
+    } else if (balance > 0) {
+      balanceClass = 'balance-low';
+    }
+    
+    // Handle key display format (hide middle part)
+    const truncatedKey = truncateKey(key.key);
+    
+    // Format update time
+    const updateTime = key.last_updated ? new Date(key.last_updated).toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) : 'Unknown';
+    
+    // Display balance or invalid status
+    const balanceDisplay = isValid ? key.balance : i18next.t('keyCard.invalid');
+    
+    keyElement.innerHTML = `
+      <div class="key-card-top">
+        <div class="key-text">${truncatedKey}</div>
+        <button class="copy-button" data-i18n="keyCard.copyButton">Copy</button>
+      </div>
+      <div class="key-card-middle">
+        <div class="balance ${balanceClass}">
+          ${balanceDisplay}
+        </div>
+      </div>
+      <div class="key-card-bottom">
+        <span data-i18n="keyCard.updatedAt">Updated at</span> ${updateTime}
+      </div>
+    `;
+    
+    // Add hover effect tip
+    keyElement.setAttribute('title', 'Click to view full key');
+    
+    // Add click event for each key card
+    keyElement.addEventListener('click', function(e) {
+      if (!e.target.closest('.copy-button')) {
+        showToast(`Key: ${key.key}`, 3000);
+      }
+    });
+    
+    // Add click event for copy button
+    const copyButton = keyElement.querySelector('.copy-button');
+    copyButton.addEventListener('click', function(e) {
+      e.stopPropagation();
+      copyToClipboard(key.key);
+      showToast('toasts.copied', 2000);
+    });
+    
+    keysContainer.appendChild(keyElement);
+  });
+  
+  // Update pagination info
+  const totalPages = Math.ceil(allKeys.length / keysPerPage);
+  document.getElementById('currentPage').textContent = currentPage;
+  document.getElementById('totalPages').textContent = totalPages;
+  
+  // Update pagination button status
+  document.getElementById('prevBtn').disabled = currentPage === 1;
+  document.getElementById('nextBtn').disabled = currentPage === totalPages;
+}
+
+// Handle key display format, hide middle part
+export function truncateKey(key) {
+  if (key.length <= 15) return key;
+  const start = key.substring(0, 10);
+  const end = key.substring(key.length - 5);
+  return start + '...' + end;
+}
+
+// Go to previous page
+export function goToPrevPage() {
+  if (currentPage > 1) {
+    currentPage--;
+    displayCurrentPage();
+  }
+}
+
+// Go to next page
+export function goToNextPage() {
+  const totalPages = Math.ceil(allKeys.length / keysPerPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    displayCurrentPage();
+  }
+}
+
+// Copy single key to clipboard
+export function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('toasts.copied');
+  }).catch(err => {
+    console.error('Copy failed:', err);
+    showToast('toasts.copyFailed', true);
+  });
+}
+
+// Copy all keys with newline separator
+export function copyAllKeysWithNewline() {
+  const keys = allKeys.map(item => item.key);
+  if (keys.length === 0) {
+    return;
+  }
+  
+  navigator.clipboard.writeText(keys.join(`
+`)).then(() => {
+    showToast('toasts.batchCopyNewline');
+  }).catch(err => {
+    console.error('Batch copy failed:', err);
+    showToast('toasts.batchCopyFailed', true);
+  });
+}
+
+// Copy all keys with comma separator
+export function copyAllKeysWithComma() {
+  const keys = allKeys.map(item => item.key);
+  if (keys.length === 0) {
+    return;
+  }
+  
+  navigator.clipboard.writeText(keys.join(',')).then(() => {
+    showToast('toasts.batchCopyComma');
+  }).catch(err => {
+    console.error('Batch copy failed:', err);
+    showToast('toasts.batchCopyFailed', true);
+  });
+}

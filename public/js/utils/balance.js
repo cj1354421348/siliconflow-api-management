@@ -1,4 +1,5 @@
 import { getAdminCredentials } from './adminAuth.js';
+import { showToast } from './ui.js';
 
 let autoRefreshIntervalId = null;
 
@@ -7,7 +8,7 @@ export async function loadKeys() {
   try {
     const credentials = getAdminCredentials();
     if (!credentials) {
-      alert(i18next.t('toasts.invalidCredentials'));
+      showToast(i18next.t('toasts.invalidCredentials'));
       return;
     }
 
@@ -52,11 +53,11 @@ export async function loadKeys() {
         keysList.appendChild(keyElement);
       });
     } else {
-      alert(data.message);
+      showToast(data.message);
     }
   } catch (error) {
     console.error('加载密钥列表失败:', error);
-    alert('加载密钥列表失败');
+    showToast('加载密钥列表失败');
   }
 }
 
@@ -64,7 +65,7 @@ export async function loadKeys() {
 export async function refreshKeyBalance(key) {
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
@@ -92,7 +93,7 @@ export async function refreshKeyBalance(key) {
 export async function refreshAllBalances() {
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
@@ -139,7 +140,7 @@ export async function deleteInvalidKeys() {
   
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
@@ -152,7 +153,7 @@ export async function deleteInvalidKeys() {
     
     const keysData = await response.json();
     if (!keysData.success) {
-      alert('获取密钥列表失败');
+      showToast('获取密钥列表失败');
       return;
     }
 
@@ -161,7 +162,7 @@ export async function deleteInvalidKeys() {
       .map(key => key.key);
     
     if (invalidKeys.length === 0) {
-      alert(i18next.t('toasts.noInvalidKeys'));
+      showToast(i18next.t('toasts.noInvalidKeys'));
       return;
     }
 

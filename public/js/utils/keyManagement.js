@@ -1,17 +1,18 @@
 import { getAdminCredentials } from './adminAuth.js';
 import { showToast } from './ui.js';
+import { loadKeys } from './balance.js';
 
 // 添加密钥
 export async function addKey() {
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
   const key = document.getElementById('newKey').value;
   if (!key) {
-    alert('请输入密钥');
+    showToast('请输入密钥');
     return;
   }
 
@@ -27,18 +28,18 @@ export async function addKey() {
     
     const data = await response.json();
     if (data.success) {
-      alert(data.message || i18next.t('toasts.keyAdded'));
+      showToast(data.message || i18next.t('toasts.keyAdded'));
       document.getElementById('newKey').value = '';
       loadKeys();
     } else {
-      alert(data.message || i18next.t('toasts.keyAddFailed'));
+      showToast(data.message || i18next.t('toasts.keyAddFailed'));
       if (data.message && data.message.includes('已存在')) {
         document.getElementById('newKey').value = '';
       }
     }
   } catch (error) {
     console.error('添加密钥失败:', error);
-    alert('添加密钥失败: ' + (error.message || '未知错误'));
+    showToast('添加密钥失败: ' + (error.message || '未知错误'));
   }
 }
 
@@ -46,21 +47,21 @@ export async function addKey() {
 export async function addBulkKeys() {
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
   const bulkKeysText = document.getElementById('bulkKeys').value.trim();
   if (!bulkKeysText) {
-    alert('请输入要添加的密钥');
+    showToast('请输入要添加的密钥');
     return;
   }
 
   // 处理密钥，支持换行和逗号分隔
-  const keys = bulkKeysText.split(/[\\n,]+/).map(key => key.trim()).filter(key => key.length > 0);
+  const keys = bulkKeysText.split(/[\n,]+/).map(key => key.trim()).filter(key => key.length > 0);
   
   if (keys.length === 0) {
-    alert('未找到有效的密钥');
+    showToast('未找到有效的密钥');
     return;
   }
 
@@ -93,7 +94,7 @@ export async function addBulkKeys() {
     }
   }
 
-  alert(i18next.t('toasts.bulkAddResult', { success: successCount, fail: failCount, exists: existsCount }));
+  showToast(i18next.t('toasts.bulkAddResult', { success: successCount, fail: failCount, exists: existsCount }));
   document.getElementById('bulkKeys').value = '';
   loadKeys();
 }
@@ -106,7 +107,7 @@ export async function deleteKey(key) {
   
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
@@ -122,13 +123,13 @@ export async function deleteKey(key) {
     
     const data = await response.json();
     if (data.success) {
-      alert(data.message || i18next.t('toasts.keyDeleted'));
+      showToast(data.message || i18next.t('toasts.keyDeleted'));
       loadKeys();
     } else {
-      alert(data.message || i18next.t('toasts.keyDeleteFailed'));
+      showToast(data.message || i18next.t('toasts.keyDeleteFailed'));
     }
   } catch (error) {
     console.error('删除密钥失败:', error);
-    alert('删除密钥失败: ' + (error.message || '未知错误'));
+    showToast('删除密钥失败: ' + (error.message || '未知错误'));
   }
 }

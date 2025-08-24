@@ -1,11 +1,13 @@
 import { getAdminCredentials } from './adminAuth.js';
+import { showToast } from './ui.js';
+import { loadKeys } from './balance.js';
 
 // 加载配置
 export async function loadConfig() {
   try {
     const credentials = getAdminCredentials();
     if (!credentials) {
-      alert(i18next.t('toasts.invalidCredentials'));
+      showToast(i18next.t('toasts.invalidCredentials'));
       return;
     }
 
@@ -24,12 +26,11 @@ export async function loadConfig() {
       document.getElementById('accessControl').value = data.data.accessControl;
       document.getElementById('guestPassword').value = data.data.guestPassword;
     } else {
-      alert(data.message);
-      // Note: We can't directly access adminCredentials here, so we'll need to handle this differently
+      showToast(data.message);
     }
   } catch (error) {
     console.error('加载配置失败:', error);
-    alert('加载配置失败');
+    showToast('加载配置失败');
   }
 }
 
@@ -37,7 +38,7 @@ export async function loadConfig() {
 export async function saveConfig() {
   const credentials = getAdminCredentials();
   if (!credentials) {
-    alert(i18next.t('toasts.invalidCredentials'));
+    showToast(i18next.t('toasts.invalidCredentials'));
     return;
   }
 
